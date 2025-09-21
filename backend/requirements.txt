@@ -1,0 +1,20 @@
+# --- Web framework ---
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# --- Base de datos ---
+sqlalchemy==2.0.34
+psycopg2-binary==2.9.9
+alembic==1.13.2   # Migraciones de BD
+
+# --- Validación ---
+pydantic==2.9.2
+
+# --- Seguridad / JWT ---
+passlib[bcrypt]==1.7.4
+python-jose==3.3.0
+python-multipart==0.0.9   # Subida de archivos / forms
+
+# --- Machine Learning ---
+joblib==1.4.2
+scikit-learn==1.5.1
