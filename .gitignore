@@ -2,7 +2,7 @@
 _pycache_/
 *.py[cod]
 *.log
-venv/
+.venv/
 .env
 
 # Node
