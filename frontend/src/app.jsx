@@ -1,7 +1,13 @@
+// src/App.jsx
+import React from "react";
+
 function App() {
   return (
-    <h1>🚀 Frontend funcionando desde Docker!</h1>
-  )
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <h1 className="text-3xl font-bold text-purple-600">Bienvenido a Citas de la Salud</h1>
+    </div>
+  );
 }
 
 export default App;
+
