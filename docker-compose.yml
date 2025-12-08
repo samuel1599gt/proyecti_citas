@@ -1,23 +1,42 @@
 version: "3.9"
 
 services:
+  postgres:
+    image: postgres:15
+    container_name: citas_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: gestion_user
+      POSTGRES_PASSWORD: gestion_pass
+      POSTGRES_DB: gestion_citas
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   backend:
     build: ./backend
     container_name: citas_backend
     restart: always
     env_file: .env
+    depends_on:
+      - postgres
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app  # para desarrollo, así ves cambios sin reconstruir
-      - ./citas.db:/app/citas.db  # persistir la BD SQLite en el host
+      - ./backend:/app  # para desarrollo en caliente
+    environment:
+      DATABASE_URL: postgresql+asyncpg://gestion_user:gestion_pass@postgres:5432/gestion_citas
 
   frontend:
     build: ./frontend
     container_name: citas_frontend
     restart: always
-    env_file: .env
-    ports:
-      - "3000:80"
     depends_on:
       - backend
+    ports:
+      - "3000:80"
+    env_file: .env
+
+volumes:
+  postgres_data:
