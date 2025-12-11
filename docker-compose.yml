@@ -1,23 +1,46 @@
 version: "3.9"
 
 services:
+
+  # ==================================
+  # 1. BACKEND (FastAPI + Gunicorn)
+  # ==================================
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      # Especifica la ruta de tu Dockerfile
+      dockerfile: Dockerfile 
     container_name: citas_backend
     restart: always
     env_file: .env
     ports:
-      - "8000:8000"
+      # Puerto de la API para acceso directo (si lo necesitas)
+      - "8000:8000" 
+    
+    # 🚨 NOTA: Se elimina el volumen de código './backend:/app'. 
+    # El código se copia durante la fase de build para un entorno de producción.
     volumes:
-      - ./backend:/app  # para desarrollo, así ves cambios sin reconstruir
-      - ./citas.db:/app/citas.db  # persistir la BD SQLite en el host
+      # Mantener el volumen de la BD si usas SQLite y quieres persistir los datos en el host
+      # Si usas PostgreSQL, elimina esta línea.
+      - ./backend/citas.db:/app/citas.db 
+    
+    # Asegúrate de que tu .env tenga configurada la variable DATABASE_URL si usas PostgreSQL
 
+  # ==================================
+  # 2. FRONTEND (React + Nginx)
+  # ==================================
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: citas_frontend
     restart: always
-    env_file: .env
+    # NO necesitas env_file para el frontend en producción si la URL de la API es fija.
+    # Si usas variables de entorno para la URL de la API, añádelas aquí:
+    # environment:
+    #   - VITE_API_BASE_URL=http://backend:8000
     ports:
-      - "3000:80"
+      # Mapea el puerto 3000 de tu PC al puerto 80 del contenedor Nginx
+      - "3000:80" 
     depends_on:
       - backend
