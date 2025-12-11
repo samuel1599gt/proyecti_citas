@@ -1,25 +1,4 @@
-# ==========================================================
-# ETAPA 1: BUILDER (Instala dependencias y prepara el entorno)
-# ==========================================================
-
-FROM python:3.12 as builder
-
-# Instalar herramientas de compilación necesarias para algunas librerías de Python (ej. NumPy)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Establecer directorio de trabajo
-WORKDIR /app
-
-# Copiar el archivo de dependencias
-COPY requirements.txt .
-
-# Instalar todas las dependencias. 
-# Esto incluye Gunicorn, Uvicorn, FastAPI, y librerías de ML.
-# Usamos --no-cache-dir para ahorrar espacio.
-RUN pip install --no-cache-dir -r requirements.txt
-
+# (Omitiendo la Etapa 1: BUILD)
 
 # ==========================================================
 # ETAPA 2: PRODUCCIÓN (Imagen final ligera para ejecución)
@@ -29,17 +8,28 @@ FROM python:3.12-slim
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# 💡 CORRECCIÓN CRÍTICA: Añadir /app al PYTHONPATH para que Gunicorn encuentre 'app.main'
+# 💡 CORRECCIÓN 1: Asegurar que Python vea el directorio /app/app
 ENV PYTHONPATH=/app
 
-# 🚨 COPIAR las LIBRERÍAS
+# 🚨 CORRECCIÓN 2: Asegurar que se instale el paquete necesario para SQLite en slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gcc \
+    # SQLite
+    libsqlite3-dev \
+    # Limpieza
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar las LIBRERÍAS (Desde la etapa "builder")
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
-# 🚨 CRÍTICO: COPIAR los BINARIOS 
+# Copiar los BINARIOS (gunicorn)
 COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/
 
-# Copiar el resto de tu código fuente (esto copia la carpeta 'app/' a '/app/app/')
-COPY . .
+# 🛑 CRÍTICO: Copiar el código fuente. Esto copia 'backend/app' a '/app/app'.
+COPY . . 
 
 # El puerto que escuchará Gunicorn
 EXPOSE 8000
