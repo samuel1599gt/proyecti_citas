@@ -29,6 +29,8 @@ FROM python:3.12-slim
 # Establecer directorio de trabajo
 WORKDIR /app
 
+ENV PYTHONPATH=/app
+
 # 🚨 COPIAR las LIBRERÍAS (Archivos .py, etc.)
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
