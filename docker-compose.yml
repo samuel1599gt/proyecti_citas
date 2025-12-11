@@ -22,7 +22,7 @@ services:
     volumes:
       # Mantener el volumen de la BD si usas SQLite y quieres persistir los datos en el host
       # Si usas PostgreSQL, elimina esta línea.
-      - ./backend/citas.db:/app/citas.db 
+      - ./sqlite_data:/app/
     
     # Asegúrate de que tu .env tenga configurada la variable DATABASE_URL si usas PostgreSQL
 
