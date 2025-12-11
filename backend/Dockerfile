@@ -29,16 +29,16 @@ FROM python:3.12-slim
 # Establecer directorio de trabajo
 WORKDIR /app
 
+# 💡 CORRECCIÓN CRÍTICA: Añadir /app al PYTHONPATH para que Gunicorn encuentre 'app.main'
 ENV PYTHONPATH=/app
 
-# 🚨 COPIAR las LIBRERÍAS (Archivos .py, etc.)
+# 🚨 COPIAR las LIBRERÍAS
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 
-# 🚨 CRÍTICO: COPIAR los BINARIOS (Ejecutables como 'gunicorn')
-# Los ejecutables se encuentran en /usr/local/bin
+# 🚨 CRÍTICO: COPIAR los BINARIOS 
 COPY --from=builder /usr/local/bin/gunicorn /usr/local/bin/
 
-# Copiar el resto de tu código fuente 
+# Copiar el resto de tu código fuente (esto copia la carpeta 'app/' a '/app/app/')
 COPY . .
 
 # El puerto que escuchará Gunicorn
