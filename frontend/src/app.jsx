@@ -6,7 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AgendaPage from './pages/AgendaPage';
-import HistorialPage from './pages/HistorialPage'; // <--- 🎯 NUEVA IMPORTACIÓN
+import HistorialPage from './pages/HistorialPage'; // 
 
 // Componente para proteger las rutas (se mantiene igual)
 const ProtectedRoute = ({ children }) => {
